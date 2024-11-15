@@ -36,6 +36,7 @@ app = Flask(__name__)
 def load_search_plugins(search_plugin_directory):
     search_plugins = []
     sys.path.insert(0, search_plugin_directory)
+    print("Loading search plugins from:" + search_plugin_directory)
 
     for filename in os.listdir(search_plugin_directory):
         if filename.endswith(".py") and filename != "__init__.py":
@@ -55,6 +56,7 @@ def load_search_plugins(search_plugin_directory):
 def load_download_plugins(download_plugin_directory):
     download_plugins = []    
     sys.path.insert(0, download_plugin_directory)
+    print("Loading download plugins from:" + download_plugin_directory)
 
     for filename in os.listdir(download_plugin_directory):
         if filename.endswith(".py") and filename != "__init__.py":
@@ -68,13 +70,14 @@ def load_download_plugins(download_plugin_directory):
             except Exception as e:
                 print(f"Failed to load plugin {module_name}: {e}")
     sys.path.pop(0)
+    print("Loaded download plugins: " + str(len(download_plugins)))
     return download_plugins
 
 def run_download_queue():
-    print("download queue started")
+    print("Download queue started")
     global sabqueue
     while True:
-        print(len(sabqueue))
+        print("Items in queue: " + len(sabqueue))
         for dl in sabqueue:
             if dl['status'] == "Queued":
                 for dlplugin in download_plugins:
