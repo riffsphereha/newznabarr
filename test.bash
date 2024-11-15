@@ -1,0 +1,1 @@
+export CONFIG=/code/newznabarr/config
