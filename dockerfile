@@ -12,6 +12,11 @@ ENV FLASK_APP=app.py
 ENV PUID=1000
 ENV PGID=1000
 
+# Install gosu to run commands as the specified user
+RUN apt-get update && \
+    apt-get install -y gosu && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy the entire app directory into the container
 COPY . /app
 
