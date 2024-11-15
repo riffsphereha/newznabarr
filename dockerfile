@@ -21,16 +21,9 @@ COPY config/ /default_config/
 # Install dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create a user and group for the app
-RUN groupadd -g ${PGID} appgroup && \
-    useradd -u ${PUID} -g appgroup -m appuser
+# Install gosu for running the application as a non-root user
+RUN apt-get update && apt-get install -y gosu
 
-# Create the $CONFIG directory if it doesn't exist and ensure correct ownership
-RUN mkdir -p $CONFIG \
-    && chown -R appuser:appgroup $CONFIG
-
-# Ensure all files, including default configs, are owned by the app user
-RUN chown -R appuser:appgroup /app /default_config
 
 # Expose the Flask app's port
 EXPOSE 10000  
@@ -38,9 +31,6 @@ EXPOSE 10000
 # Add the entrypoint script to check and copy config files
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-# Switch to the non-root user
-USER appuser
 
 # Set the entrypoint to run the startup script
 ENTRYPOINT ["/entrypoint.sh"]
