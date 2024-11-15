@@ -29,6 +29,8 @@ RUN groupadd -g ${PGID} appgroup && \
 # Create the $CONFIG directory if it doesn't exist
 RUN mkdir -p $CONFIG
 
+USER root
+
 # Ensure all files, including default configs, are owned by the app user
 RUN chown -R appuser:appgroup /app /default_config ${CONFIG}
 
