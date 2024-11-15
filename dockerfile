@@ -35,12 +35,12 @@ RUN chown -R appuser:appgroup /app /default_config
 # Expose the Flask app's port
 EXPOSE 10000  
 
+# Switch to the non-root user
+USER appuser
+
 # Add the entrypoint script to check and copy config files
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-# Switch to the non-root user
-USER appuser
 
 # Set the entrypoint to run the startup script
 ENTRYPOINT ["/entrypoint.sh"]
