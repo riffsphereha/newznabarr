@@ -77,7 +77,7 @@ def run_download_queue():
     print("Download queue started")
     global sabqueue
     while True:
-        print("Items in queue: " + len(sabqueue))
+        print("Items in queue: " + str(len(sabqueue)))
         for dl in sabqueue:
             if dl['status'] == "Queued":
                 for dlplugin in download_plugins:
