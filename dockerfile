@@ -26,7 +26,7 @@ RUN groupadd -g ${PGID} appgroup && \
     useradd -u ${PUID} -g appgroup -m appuser
 
 # Ensure all files, including default configs, are owned by the app user
-RUN chown -R appuser:appgroup /app /default_config $CONFIG
+RUN chown -R appuser:appgroup /app /default_config
 
 # Expose the Flask app's port
 EXPOSE 10000  
