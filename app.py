@@ -18,6 +18,8 @@ from sabnzbd import *
 # directory variables
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.environ.get('CONFIG')
+FLASK_PORT = os.environ.get("FLASK_RUN_PORT")
+FLASK_HOST = os.environ.get("FLASK_RUN_HOST")
 PLUGIN_SEARCH_DIR = os.path.join(CONFIG_DIR, "plugins","search")
 PLUGIN_DOWNLOAD_DIR = os.path.join(CONFIG_DIR, "plugins","download")
 DOWNLOAD_DIR = "/data/downloads/downloadarr"
@@ -272,4 +274,4 @@ if __name__ == "__main__":
     # load configs and plugins
     start()
     # start flask
-    app.run(host="0.0.0.0", port=10000)
+    app.run(host=FLASK_HOST, port=FLASK_PORT)

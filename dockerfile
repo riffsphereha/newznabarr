@@ -37,4 +37,4 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # The command to run the Flask app when the container starts
-CMD ["flask", "run"]
+CMD ["python", "app.py"]
