@@ -19,20 +19,18 @@ COPY . /app
 COPY config/ /default_config/
 
 # Install dependencies from requirements.txt
-RUN pip install  -r requirements.txt
-    # --no-cache-dir
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Create a user and group for the app
 RUN groupadd -g ${PGID} appgroup && \
     useradd -u ${PUID} -g appgroup -m appuser
 
-# Create the $CONFIG directory if it doesn't exist
-RUN mkdir -p $CONFIG
-
-USER root
+# Create the $CONFIG directory if it doesn't exist and ensure correct ownership
+RUN mkdir -p $CONFIG \
+    && chown -R appuser:appgroup $CONFIG
 
 # Ensure all files, including default configs, are owned by the app user
-RUN chown -R appuser:appgroup /app /default_config ${CONFIG}
+RUN chown -R appuser:appgroup /app /default_config
 
 # Expose the Flask app's port
 EXPOSE 10000  
