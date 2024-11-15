@@ -116,6 +116,7 @@ def start():
     global search_plugins
     global download_plugins
     global sabqueue
+    print("Going to load search plugins")
     search_plugins = load_search_plugins(PLUGIN_SEARCH_DIR)
     download_plugins = load_download_plugins(PLUGIN_DOWNLOAD_DIR)
     sabqueue = sabloadqueue(CONFIG_DIR)
