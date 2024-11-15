@@ -25,8 +25,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN groupadd -g ${PGID} appgroup && \
     useradd -u ${PUID} -g appgroup -m appuser
 
+# Create the $CONFIG directory if it doesn't exist
+RUN mkdir -p $CONFIG
+
 # Ensure all files, including default configs, are owned by the app user
-RUN chown -R appuser:appgroup /app /default_config
+RUN chown -R appuser:appgroup /app /default_config ${CONFIG}
 
 # Expose the Flask app's port
 EXPOSE 10000  
