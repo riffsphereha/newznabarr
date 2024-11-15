@@ -21,10 +21,6 @@ COPY config/ /default_config/
 # Install dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install gosu for running the application as a non-root user
-RUN apt-get update && apt-get install -y gosu
-
-
 # Expose the Flask app's port
 EXPOSE 10000  
 

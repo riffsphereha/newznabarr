@@ -1,22 +1,20 @@
 #!/bin/bash
 
-# Check if the CONFIG directory exists, and create it if it doesn't
+# Ensure the $CONFIG directory exists
 mkdir -p "$CONFIG"
 
-# Create the user and group at runtime using the environment variables
-groupadd -g ${PGID} appgroup || true
-useradd -u ${PUID} -g appgroup -m appuser || true
+# Set file ownership using PUID and PGID environment variables
+echo "Setting file ownership to PUID=${PUID} and PGID=${PGID}"
 
-# Ensure ownership of the /app and /default_config directories
-chown -R appuser:appgroup /app /default_config
-# Ensure ownership of the config directory
-chown -R appuser:appgroup "$CONFIG"
+# Set the ownership of the directories and files to the specified PUID and PGID
+chown -R ${PUID}:${PGID} /app /default_config "$CONFIG"
 
-# Copy default config files if CONFIG is empty
+# If the $CONFIG directory is empty, copy the default configuration files
 if [ -z "$(ls -A "$CONFIG")" ]; then
     echo "Copying default configuration files to $CONFIG..."
     cp -r /default_config/* "$CONFIG"
+    chown -R ${PUID}:${PGID} "$CONFIG"
 fi
 
-# Execute the passed CMD
-exec gosu appuser "$@"
+# Execute the command passed to the container as a non-root user (no user creation, just chown)
+exec gosu ${PUID}:${PGID} "$@"
