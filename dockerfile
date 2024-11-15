@@ -35,11 +35,14 @@ EXPOSE 10000
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Switch to the non-root user
-USER appuser
-
 # Set the entrypoint to run the startup script
 ENTRYPOINT ["/entrypoint.sh"]
+
+# Set the config dir to user owned
+RUN chown -R appuser:appgroup ${CONFIG}
+
+# Switch to the non-root user
+USER appuser
 
 # The command to run the Flask app when the container starts
 CMD ["flask", "run"]
