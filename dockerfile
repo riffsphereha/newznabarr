@@ -38,9 +38,6 @@ RUN chmod +x /entrypoint.sh
 # Set the entrypoint to run the startup script
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Set the config dir to user owned
-RUN chown -R appuser:appgroup ${CONFIG}
-
 # Switch to the non-root user
 USER appuser
 
