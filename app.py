@@ -49,6 +49,7 @@ def load_search_plugins(search_plugin_directory):
             except Exception as e:
                 print(f"Failed to load plugin {module_name}: {e}")
     sys.path.pop(0)
+    print("Loaded search plugins: " + str(len(search_plugins)))
     return search_plugins
 
 def load_download_plugins(download_plugin_directory):

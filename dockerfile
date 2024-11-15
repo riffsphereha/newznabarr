@@ -6,7 +6,8 @@ WORKDIR /app
 
 # Set the environment variable CONFIG to the path where you want the config files
 ENV CONFIG=/config
-ENV FLASK_RUN_PORT=10000  # Set the Flask port to 10000
+ENV FLASK_RUN_PORT=10000  
+# Set the Flask port to 10000
 
 # Copy the entire app directory into the container
 COPY . /app
@@ -18,11 +19,13 @@ COPY config/ /default_config/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the Flask app's port
-EXPOSE 10000  # Expose port 10000
+EXPOSE 10000  
+# Expose port 10000
 
 # Set environment variables for Flask
 ENV FLASK_APP=app.py
-ENV FLASK_RUN_HOST=0.0.0.0  # Make Flask listen on all IP addresses
+ENV FLASK_RUN_HOST=0.0.0.0  
+# Make Flask listen on all IP addresses
 
 # Add the entrypoint script to check and copy config files
 COPY entrypoint.sh /entrypoint.sh
