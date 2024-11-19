@@ -4,6 +4,9 @@ import requests
 
 from plugin_search_interface import PluginSearchBase
 
+def getmyprefix():
+    return "libgen"
+
 def convert_size_to_bytes(size_str):
     size_str = size_str.lower()
     if 'kb' in size_str:
@@ -16,7 +19,7 @@ def convert_size_to_bytes(size_str):
         size_in_bytes = float(size_str)  # Assume bytes if no unit is specified
     return str(int(size_in_bytes))
 
-def convert_results(books):
+def convert_results(books, cat):
     results = []
     for book in books:
         for link in book["links"]:
@@ -28,8 +31,9 @@ def convert_results(books):
                 "comments": link,
                 "files": "1",
                 "size": book["size"],
-                "category": "7020",
-                "grabs": "100"
+                "category": cat,
+                "grabs": "100",
+                "prefix": getmyprefix()
             })
     return results
     
@@ -119,11 +123,11 @@ class LibGenSearch(PluginSearchBase):
         return "sample"
 
     def getprefix(self):
-        return "libgen"
+        return getmyprefix()
 
-    def search(self, query):
+    def search(self, query, cat):
         books = search_libgen(query)
-        results = convert_results(books)
+        results = convert_results(books, cat)
         return results
 
 

@@ -18,8 +18,8 @@ from sabnzbd import *
 # directory variables
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.environ.get('CONFIG')
-FLASK_PORT = os.environ.get("FLASK_RUN_PORT")
-FLASK_HOST = os.environ.get("FLASK_RUN_HOST")
+FLASK_PORT = os.environ.get("FLASK_RUN_PORT", "10000")
+FLASK_HOST = os.environ.get("FLASK_RUN_HOST", "0.0.0.0")
 PLUGIN_SEARCH_DIR = os.path.join(CONFIG_DIR, "plugins","search")
 PLUGIN_DOWNLOAD_DIR = os.path.join(CONFIG_DIR, "plugins","download")
 DOWNLOAD_DIR = "/data/downloads/downloadarr"
@@ -78,20 +78,24 @@ def load_download_plugins(download_plugin_directory):
 def run_download_queue():
     print("Download queue started")
     global sabqueue
+    global CONFIG_DIR
     while True:
         print("Items in queue: " + str(len(sabqueue)))
         for dl in sabqueue:
             if dl['status'] == "Queued":
+                dl["status"] = "Downloading"
+                sabsavequeue(CONFIG_DIR,sabqueue)
                 for dlplugin in download_plugins:
                     if dl["prefix"] in dlplugin.getprefix():
                         result = dlplugin.download(dl["url"],dl["title"],DOWNLOAD_DIR,dl["cat"])
                         if result == "404":
-                            sabdeletefromqueue(CONFIG_DIR,sabqueue,dl["nzo"])
+                            dl["status"] = "Failed"
+                            sabsavequeue(CONFIG_DIR,sabqueue)                            
                         else:
                             dl["status"] = "Complete"
                             dl["storage"] = result
                             sabsavequeue(CONFIG_DIR,sabqueue)
-        time.sleep(60)
+        time.sleep(1)
 
 def read_config(config_file):
     try:
@@ -119,9 +123,14 @@ def start():
     global download_plugins
     global sabqueue
     print("Going to load search plugins")
+    print("Going to load search plugins")
     search_plugins = load_search_plugins(PLUGIN_SEARCH_DIR)
     download_plugins = load_download_plugins(PLUGIN_DOWNLOAD_DIR)
     sabqueue = sabloadqueue(CONFIG_DIR)
+    for dl in sabqueue:
+        if dl["status"] == "Downloading":
+            dl["status"] = "Queued"
+            sabsavequeue(CONFIG_DIR,sabqueue)
 
 # when api with t=caps, collect all supported cats from all search plugins
 # and report them correctly
@@ -151,16 +160,42 @@ def api():
         return Response(xml_response, mimetype="application/xml")
 
     # readarr uses t=book to check if the indexer works
+    # pretty sure this is for rss, so will have to implement rss later, fine for now
     elif request.args.get("t") == "book" :
         request_cats=(request.args.get("cat").split(","))
         for plugin in search_plugins:
             for cat in plugin.getcat():
                 if cat in request_cats:
                     query = plugin.gettestquery()
-                    results = plugin.search(query)
-                    xml_response = searchresults_to_response(request.host_url, plugin.getprefix, results)
+                    results = plugin.search(query, cat)
+                    xml_response = searchresults_to_response(request.host_url, results)
                     return Response(xml_response, mimetype="application/xml")
         return "No search provider found"
+
+    # lidarr uses t=music
+    # if there is artist and album provided, it's a search
+    # else it's probably rss feed
+    elif request.args.get("t") == "music" :
+        if "artist" in request.args:
+            request_cats=(request.args.get("cat").split(","))
+            for plugin in search_plugins:
+                for cat in plugin.getcat():
+                    if cat in request_cats:
+                        query = request.args.get("artist") + " - " + request.args.get("album")
+                        results = plugin.search(query, cat)
+                        xml_response = searchresults_to_response(request.host_url, results)
+                        return Response(xml_response, mimetype="application/xml")
+            return "No search provider found"
+        else:
+            request_cats=(request.args.get("cat").split(","))
+            for plugin in search_plugins:
+                for cat in plugin.getcat():
+                    if cat in request_cats:
+                        query = plugin.gettestquery()
+                        results = plugin.search(query, cat)
+                        xml_response = searchresults_to_response(request.host_url, results)
+                        return Response(xml_response, mimetype="application/xml")
+            return "No search provider found"
 
     # t=search is the normal search function
     elif request.args.get("t") == "search" :
@@ -169,8 +204,8 @@ def api():
             for cat in plugin.getcat():
                 if cat in request_cats:
                     query = request.args.get("q")
-                    results = plugin.search(query)
-                    xml_response = searchresults_to_response(request.host_url, plugin.getprefix(), results)
+                    results = plugin.search(query, cat)
+                    xml_response = searchresults_to_response(request.host_url, results)
                     return Response(xml_response, mimetype="application/xml")
         return "No search provider found"
 
@@ -244,10 +279,11 @@ def api():
                 "title": title,
                 "status": "Queued",
                 "cat": request.args.get("cat")
-                })
+            })
             result=json.loads("""{"status":true,"nzo_ids":["SABnzbd_nzo_cqz8nwn8"]}""")
             result["nzo_ids"]=[f"SABnzbd_nzo_{nzo}"]
             sabsavequeue(CONFIG_DIR,sabqueue)
+            print(sabqueue)
             return(result), 200
         return jsonify({"error": "Access Denied"}), 403
 
@@ -263,7 +299,12 @@ def api():
 
     elif request.args.get("mode") == 'history':
         if SAB_API == request.args.get("apikey"):
-            return sabgethistory(sabqueue)
+            if "name" in request.args:
+                if request.args.get("name") == "delete":
+                    sabqueue = sabdeletefromqueue(CONFIG_DIR,sabqueue,request.args.get("value"))
+                    return "ok"
+            else:
+                return sabgethistory(sabqueue)
         return jsonify({"error": "Access Denied"}), 403
     
 download_thread = threading.Thread(target=run_download_queue)

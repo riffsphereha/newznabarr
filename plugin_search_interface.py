@@ -17,7 +17,7 @@ class PluginSearchBase(ABC):
         pass
 
     @abstractmethod
-    def search(self, query):
+    def search(self, query, cat):
         """Perform a search"""
         # Must include:
         # link: some info on where to download from

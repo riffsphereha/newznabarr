@@ -198,6 +198,25 @@ def sabgetqueue(downloads):
             slots.append({
                 "index": index,
                 "nzo_id": f"SABnzbd_nzo_{download['nzo']}",
+                "status": "Queued",
+                "filename": download['title'],
+                "cat": download['cat']
+            })
+            index = index + 1
+        if download["status"] == "Downloading":
+            slots.append({
+                "index": index,
+                "nzo_id": f"SABnzbd_nzo_{download['nzo']}",
+                "status": "Downloading",
+                "filename": download['title'],
+                "cat": download['cat']
+            })
+            index = index + 1
+        if download["status"] == "Failed":
+            slots.append({
+                "index": index,
+                "nzo_id": f"SABnzbd_nzo_{download['nzo']}",
+                "status": "Failed",
                 "filename": download['title'],
                 "cat": download['cat']
             })
@@ -217,7 +236,8 @@ def sabgethistory(downloads):
                 "category": download["cat"],
                 "status": "Completed",
                 "nzo_id": f"SABnzbd_nzo_{download['nzo']}",
-                "storage": download["storage"]
+                "storage": download["storage"],
+                "path": download["storage"]
             })
             index = index + 1
 
@@ -225,6 +245,8 @@ def sabgethistory(downloads):
     return history
 
 def sabsavequeue(config_dir, downloadqueue):
+    print("ping")
+    print("saved queue: " + str(len(downloadqueue)))
     with open(os.path.join(config_dir, "sabqueue.conf"),"w") as file:
         json.dump(downloadqueue, file, indent=4)
 

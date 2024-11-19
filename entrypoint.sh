@@ -16,5 +16,8 @@ if [ -z "$(ls -A "$CONFIG")" ]; then
     chown -R ${PUID}:${PGID} "$CONFIG"
 fi
 
+# Copy default plugins to the config directory, overwriting existing plugins
+cp -r /default_config/plugins/* "$CONFIG/plugins/"
+
 # Execute the command passed to the container as a non-root user (no user creation, just chown)
 exec gosu ${PUID}:${PGID} "$@"

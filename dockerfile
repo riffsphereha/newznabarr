@@ -14,7 +14,7 @@ ENV PGID=1000
 
 # Install gosu to run commands as the specified user
 RUN apt-get update && \
-    apt-get install -y gosu && \
+    apt-get install -y gosu ffmpeg && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the entire app directory into the container

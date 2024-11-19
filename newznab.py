@@ -2,14 +2,14 @@ import email.utils
 import time
 import xml.etree.ElementTree as ET
 
-def searchresults_to_response(server, prefix, results):
+def searchresults_to_response(server, results):
     root = ET.Element("rss", version="2.0", attrib={
         "xmlns:atom": "http://www.w3.org/2005/Atom", 
         "xmlns:newznab": "http://www.newznab.com/DTD/2010/feeds/attributes/"
     })
     channel = ET.SubElement(root, "channel")
     
-    ET.SubElement(channel, "title").text = "DownloadArr"
+    ET.SubElement(channel, "title").text = "NewzNabArr"
     ET.SubElement(channel, "description").text = "Multiple newznab proxies for starr apps"
     ET.SubElement(channel, "link").text = server
 
@@ -17,6 +17,7 @@ def searchresults_to_response(server, prefix, results):
     ET.SubElement(channel, "pubDate").text = pub_date
 
     for result in results:
+        prefix = result["prefix"]
         link2 = f"{server}api?download=nzb&prefix={prefix}&url={result['link']}&size={result['size']}&title={result['title']}"
         item = ET.SubElement(channel, "item")
         ET.SubElement(item, "title").text = result["title"]
