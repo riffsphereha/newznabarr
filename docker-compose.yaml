@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  newznabarr:
+    image: riffsphereha/newznabarr:latest
+    container_name: newznabarr
+    environment:
+      - FLASK_RUN_PORT=10000
+      - PUID=1000
+      - PGID=1000
+      - CONFIG=/config
+    ports:
+      - "10000:10000"
+    volumes:
+      - /path/to/config:/config
+      - /path/to/download:/data/downloads/downloadarr
+    restart: unless-stopped
