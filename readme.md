@@ -40,27 +40,49 @@ GitHub: riffsphereha/newznabarr
 
 Let me know what you think, and if you have any ideas for additional plugins, a new name, or an icon, I’d love to hear them! 🌟
 
-Install:
-    Install using docker.
-    Default port is 10000. Use FLASK_RUN_PORT environmental variable to change container port.
-    /config points to your appdata. Here will be the config.json files, the sab queue, and the plugins.
-    Use PUID and PGID to set user and group. For unraid, set them to 99 and 100
-    Make sure to add a downloadfolder, and make it match your folder setup. Edit the config.json to reflect this folder.
-        Since this is early alpha and I'm lazy, the default still uses the old name: "/data/downloads/downloadarr".
+# Installation
 
-How to use:
+## Install using Docker
 
-    Add a sab client to your *arr app like you normally would: Name, enable, host, port, api key.
+- **Default Port**: `10000`. You can change this using the `FLASK_RUN_PORT` environment variable.
+- **Configuration Directory**: Mount `/config` to your appdata folder. This will contain:
+  - `config.json` files
+  - File to keep track of our SAB queue
+  - Plugins
+- **User and Group IDs**:
+  - Use `PUID` and `PGID` to set the user and group IDs for permissions.
+  - For Unraid, set `PUID` to `99` and `PGID` to `100`.
+- **Download Folder**:
+  - Add a download folder that matches your setup and update the `config.json` file to reflect this folder.
+  - **Note**: The default path is still using the old name `/data/downloads/downloadarr` (this will be updated in future versions).
 
-        For now, there are only plugins for readarr and lidarr, so I haven't tested it with others.
+---
 
-        The api key can be set in the config file.
+# How to Use
 
-        Enable the advanced settings and set the client priority to 50. Since this doesn't support real nzb, we don't want it to be used for that.
-    
-    Add a newznab indexer as you normally would: Name, enable search (rss is not yet supported), url (http://ip:port style)
+## 1. Add a SABnzbd Client to Your *Arr App
 
-        No api key is needed.
+- Configure as you normally would with:
+  - **Name**
+  - **Enable**
+  - **Host**
+  - **Port**
+  - **API Key**
 
-        Enable the advanced settings and set download client to the sabnzbd client you just added. 
+- **Notes**:
+  - Currently, plugins are only available for **Readarr** and **Lidarr**, so other *Arr apps are untested.
+  - The API key can be set in the `config.json` file.
+  - Enable advanced settings and set the **Client Priority** to `50`. Since this doesn't support real NZBs, it should only be used for supported plugins.
+  
+## 2. Add a Newznab Indexer
+
+- Configure as you normally would with:
+  - **Name**
+  - **Enable Search** (RSS support is not yet available)
+  - **URL** (use the `http://<ip>:<port>` format).
+
+- **Notes**:
+  - No API key is required.
+  - Enable advanced settings and set the **Download Client** to the SABnzbd client you just added.
+
 
