@@ -160,20 +160,51 @@ def home():
         </head>
         <body>
             <h1>Newznabarr is running!</h1>
+            <a href="/queue">View SAB Queue</a>
             <p>Configure in *arr apps:</p>
             <ul>
-                <li><a href="https://github.com/your-repo/image1.png" target="_blank">
-                    <img src="https://github.com/your-repo/image1.png" alt="Image 1" style="width:200px;"></a></li>
-                <li><a href="https://github.com/your-repo/image2.png" target="_blank">
-                    <img src="https://github.com/your-repo/image2.png" alt="Image 2" style="width:200px;"></a></li>
-                <li><a href="https://github.com/your-repo/image3.png" target="_blank">
-                    <img src="https://github.com/your-repo/image3.png" alt="Image 3" style="width:200px;"></a></li>
-                <li><a href="https://github.com/your-repo/image4.png" target="_blank">
-                    <img src="https://github.com/your-repo/image4.png" alt="Image 4" style="width:200px;"></a></li>
+                <img src="https://raw.githubusercontent.com/riffsphereha/newznabarr/master/images/sabnzbd1.png"></a>
+                <img src="https://raw.githubusercontent.com/riffsphereha/newznabarr/master/images/sabnzbd2.png"></a>
+                <img src="https://raw.githubusercontent.com/riffsphereha/newznabarr/master/images/newznab1.png"></a>
+                <img src="https://raw.githubusercontent.com/riffsphereha/newznabarr/master/images/newznab2.png"></a>
             </ul>
         </body>
     </html>
     """
+
+@app.route("/queue")
+def queue():
+    queue_html = """
+    <html>
+        <head>
+            <title>SAB Queue</title>
+        </head>
+        <body>
+            <h1>SAB Queue</h1>
+            <table border="1" cellpadding="5" cellspacing="0">
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Plugin</th>
+                    <th>Status</th>
+                </tr>
+    """
+    # Loop through sabqueue and append rows
+    for item in sabqueue:
+        queue_html += f"""
+            <tr>
+                <td>{item['title']}</td>
+                <td>{item['cat']}</td>
+                <td>{item['prefix']}</td>
+                <td>{item['status']}</td>
+            </tr>
+        """
+    queue_html += """
+            </table>
+        </body>
+    </html>
+    """
+    return queue_html
 
 @app.route("/api", methods=["GET", "POST"])
 def api():
