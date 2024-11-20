@@ -49,12 +49,18 @@ Install:
         Since this is early alpha and I'm lazy, the default still uses the old name: "/data/downloads/downloadarr".
 
 How to use:
+
     Add a sab client to your *arr app like you normally would: Name, enable, host, port, api key.
+
         For now, there are only plugins for readarr and lidarr, so I haven't tested it with others.
+
         The api key can be set in the config file.
+
         Enable the advanced settings and set the client priority to 50. Since this doesn't support real nzb, we don't want it to be used for that.
     
     Add a newznab indexer as you normally would: Name, enable search (rss is not yet supported), url (http://ip:port style)
+
         No api key is needed.
+
         Enable the advanced settings and set download client to the sabnzbd client you just added. 
 
