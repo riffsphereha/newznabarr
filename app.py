@@ -151,6 +151,30 @@ def newznab_caps_response():
 
 # flask routes and code
 
+@app.route("/")
+def home():
+    return """
+    <html>
+        <head>
+            <title>Newznabarr</title>
+        </head>
+        <body>
+            <h1>Newznabarr is running!</h1>
+            <p>Configure in *arr apps:</p>
+            <ul>
+                <li><a href="https://github.com/your-repo/image1.png" target="_blank">
+                    <img src="https://github.com/your-repo/image1.png" alt="Image 1" style="width:200px;"></a></li>
+                <li><a href="https://github.com/your-repo/image2.png" target="_blank">
+                    <img src="https://github.com/your-repo/image2.png" alt="Image 2" style="width:200px;"></a></li>
+                <li><a href="https://github.com/your-repo/image3.png" target="_blank">
+                    <img src="https://github.com/your-repo/image3.png" alt="Image 3" style="width:200px;"></a></li>
+                <li><a href="https://github.com/your-repo/image4.png" target="_blank">
+                    <img src="https://github.com/your-repo/image4.png" alt="Image 4" style="width:200px;"></a></li>
+            </ul>
+        </body>
+    </html>
+    """
+
 @app.route("/api", methods=["GET", "POST"])
 def api():
     global sabqueue
